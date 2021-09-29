@@ -42,6 +42,10 @@ options(htmltools.dir.version = FALSE)
 
 ### Fisheries and Oceans Canada
 
+<br/>
+
+<https://fishandwhistle.net/slides/qgisprocess2021>
+
 <!-- this is how you get the parliament hill blue thing on your slide  --->
 .landscape[
 
