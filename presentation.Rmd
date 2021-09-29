@@ -145,8 +145,10 @@ result
 # Using qgisprocess
 
 ```{r, echo=TRUE}
-output_sf <- sf::read_sf(qgis_output(result, "OUTPUT"))
-plot(sf::st_geometry(output_sf))
+library(sf)
+
+output_sf <- st_as_sf(result)
+plot(st_geometry(output_sf))
 ```
 
 ---
@@ -242,6 +244,14 @@ result
 ---
 
 # Questions?
+
+qgisprocess on GitHub: <https://github.com/paleolimbot/qgisprocess>
+
+@paleolimbot on Twitter
+
+@paleolimbot on GitHub
+
+These slides: <https://fishandwhistle.net/slides/qgisprocess2021>
 
 .landscape[
 
