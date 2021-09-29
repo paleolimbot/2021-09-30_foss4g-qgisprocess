@@ -20,7 +20,9 @@ output:
 class: theme-xaringan-title-slide, center, middle
 
 ```{r setup, include=FALSE}
-# library(stuff)
+library(sf)
+library(raster)
+# remotes::install_github("paleolimbot/qgisprocess")
 
 knitr::opts_chunk$set(
   dpi = 200,
@@ -34,11 +36,11 @@ options(htmltools.dir.version = FALSE)
 
 <!-- this is actually the title slide --->
 
-# qgisprocess: Connecting R-spatial and QGIS
+# Connecting R-spatial and QGIS
 
 ### Dewey Dunnington
 
-### `r Sys.Date()`
+### Fisheries and Oceans Canada
 
 <!-- this is how you get the parliament hill blue thing on your slide  --->
 .landscape[
@@ -47,46 +49,164 @@ options(htmltools.dir.version = FALSE)
 
 ---
 
-# Slide and content
+# Using qgisprocess
 
-Here is some content and a plot
-
-```{r, echo=FALSE}
-hist(faithful$waiting)
+```{r, echo=TRUE}
+# remotes::install_github("paleolimbot/qgisprocess")
+library(qgisprocess)
 ```
-
-
-.footnote[
-No geysers were harmed in the making of this slide.
-]
 
 ---
 
-# Slide with left/right cols
+# Using qgisprocess
 
-.pull-left[
+```{r, echo=TRUE, results='hide', message=FALSE}
+library(sf)
 
-- Point one
-- Point two
-- Point three
-- Point four
+nc <- read_sf(system.file("gpkg/nc.gpkg", package = "sf")) %>% 
+  st_transform("EPSG:3358") # North Carolina state plane
 
-]
-
-.pull-right[
-
-You can put RMarkdown content here too:
-
-```{r, echo=TRUE, fig.width=4, fig.height=4}
-plot(1:5)
+result <- qgis_run_algorithm(
+  "native:buffer",
+  INPUT = nc,
+  DISTANCE = 100000,
+  DISSOLVE = TRUE
+)
 ```
 
-]
+---
+
+# Using qgisprocess
+
+    Argument `SEGMENTS` is unspecified (using QGIS default value).
+    Using `END_CAP_STYLE = "Round"`
+    Using `JOIN_STYLE = "Round"`
+    Argument `MITER_LIMIT` is unspecified (using QGIS default value).
+    Using `OUTPUT = qgis_tmp_vector()`
 
 ---
-class: inverse, center, middle
 
-# Section header slide
+# Using qgisprocess
+
+    Running /Applications/QGIS-LTR.app/Contents/MacOS/bin/qgis_process run 'native:buffer' \
+      '--INPUT=/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b1aa5ed2f.gpkg' \
+      '--DISTANCE=1' '--END_CAP_STYLE=0' '--JOIN_STYLE=0' '--DISSOLVE=TRUE' \
+      '--OUTPUT=/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b376b654.gpkg
+
+---
+
+# Using qgisprocess
+      
+    ----------------
+    Inputs
+    ----------------
+    
+    DISSOLVE:	TRUE
+    DISTANCE:	1
+    END_CAP_STYLE:	0
+    INPUT:	/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b1aa5ed2f.gpkg
+    JOIN_STYLE:	0
+    OUTPUT:	/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b376b654.gpkg
+    
+    
+    0...10...20...30...40...50...60...70...80...90...
+
+---
+
+# Using qgisprocess
+    
+    ----------------
+    Results
+    ----------------
+    
+    OUTPUT:	/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b376b654.gpkg
+
+---
+
+# Using qgisprocess
+
+```{r, echo=TRUE}
+result
+```
+
+---
+
+# Using qgisprocess
+
+```{r, echo=TRUE}
+output_sf <- sf::read_sf(qgis_output(result, "OUTPUT"))
+plot(sf::st_geometry(output_sf))
+```
+
+---
+
+# Using qgisprocess
+
+```{r, echo=TRUE, rows.print=8}
+qgis_algorithms()
+```
+
+---
+
+# Using qgisprocess
+
+```{r, echo=TRUE, eval=FALSE}
+qgis_show_help("native:buffer")
+```
+
+    Buffer (native:buffer)
+    
+    ----------------
+    Description
+    ----------------
+    This algorithm computes a buffer area for all the features in an input layer, using a fixed or dynamic distance.
+    ...
+    
+    ----------------
+    Arguments
+    ----------------
+    
+    INPUT: Input layer
+    	Argument type:	source
+    	Acceptable values:
+    		- Path to a vector layer
+    ...
+    
+    ----------------
+    Outputs
+    ----------------
+    
+    OUTPUT: <outputVector>
+    	Buffered
+
+---
+
+# Challenges
+
+```{r, echo=TRUE, eval=FALSE}
+qgis_run_algorithm(
+  "native:aggregate",
+  INPUT = nc,
+  AGGREGATES = ""
+)
+```
+
+    ERROR:	An error was encountered while checking parameter values
+    	Incorrect parameter value for AGGREGATES
+    
+    Error: System command 'qgis_process' failed, exit status: 1, stderr:
+    E> ERROR:	An error was encountered while checking parameter values
+    E> 	Incorrect parameter value for AGGREGATES
+
+---
+
+# Acknowledgements
+
+- QGIS authors: Nyall Dawson
+
+- qgisprocess collaborators: Jan Caha, Floris Vanderhaeghe, Robin Lovelace, Jannes Muenchow
+
+- Fisheries and Oceans Canada: Clark Richards, Blair Greenan
 
 ---
 
