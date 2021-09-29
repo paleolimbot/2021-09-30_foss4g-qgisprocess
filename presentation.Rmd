@@ -21,7 +21,7 @@ class: theme-xaringan-title-slide, center, middle
 
 ```{r setup, include=FALSE}
 library(sf)
-library(raster)
+
 # remotes::install_github("paleolimbot/qgisprocess")
 
 knitr::opts_chunk$set(
@@ -36,7 +36,7 @@ options(htmltools.dir.version = FALSE)
 
 <!-- this is actually the title slide --->
 
-# Connecting R-spatial and QGIS
+# Connecting R and QGIS
 
 ### Dewey Dunnington
 
@@ -46,6 +46,23 @@ options(htmltools.dir.version = FALSE)
 .landscape[
 
 ]
+
+---
+class: center, middle
+
+![qgis_proces tweet](qgis-process-tweet.png)
+
+---
+
+# Using qgisprocess
+
+The magic is all from the [`qgis_process` command-line utility](https://docs.qgis.org/3.16/en/docs/user_manual/processing/standalone.html#using-processing-from-the-command-line)! (QGIS >= 3.16)
+
+<br/>
+
+    $ qgis_process
+    QGIS Processing Executor - 3.16.10-Hannover 'Hannover' (3.16.10-Hannover)
+    Usage: qgis_process [--json] [command] [algorithm id or path to model file] [parameters]
 
 ---
 
@@ -78,17 +95,7 @@ result <- qgis_run_algorithm(
 
 # Using qgisprocess
 
-    Argument `SEGMENTS` is unspecified (using QGIS default value).
-    Using `END_CAP_STYLE = "Round"`
-    Using `JOIN_STYLE = "Round"`
-    Argument `MITER_LIMIT` is unspecified (using QGIS default value).
-    Using `OUTPUT = qgis_tmp_vector()`
-
----
-
-# Using qgisprocess
-
-    Running /Applications/QGIS-LTR.app/Contents/MacOS/bin/qgis_process run 'native:buffer' \
+    Running qgis_process run 'native:buffer' \
       '--INPUT=/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b1aa5ed2f.gpkg' \
       '--DISTANCE=1' '--END_CAP_STYLE=0' '--JOIN_STYLE=0' '--DISSOLVE=TRUE' \
       '--OUTPUT=/var/folders/gt/l87wjg8s7312zs9s7c1fgs900000gn/T//RtmpOKFcD5/file607b669acaa1/file607b376b654.gpkg
@@ -159,25 +166,17 @@ qgis_show_help("native:buffer")
     ----------------
     Description
     ----------------
-    This algorithm computes a buffer area for all the features in an input layer, using a fixed or dynamic distance.
+    This algorithm computes a buffer area for all the features 
+    in an input layer, using a fixed or dynamic distance.
     ...
-    
     ----------------
     Arguments
     ----------------
-    
-    INPUT: Input layer
-    	Argument type:	source
-    	Acceptable values:
-    		- Path to a vector layer
     ...
-    
     ----------------
     Outputs
     ----------------
-    
-    OUTPUT: <outputVector>
-    	Buffered
+    ...
 
 ---
 
@@ -187,16 +186,44 @@ qgis_show_help("native:buffer")
 qgis_run_algorithm(
   "native:aggregate",
   INPUT = nc,
-  AGGREGATES = ""
+  AGGREGATES = "???"
 )
 ```
 
     ERROR:	An error was encountered while checking parameter values
     	Incorrect parameter value for AGGREGATES
-    
-    Error: System command 'qgis_process' failed, exit status: 1, stderr:
-    E> ERROR:	An error was encountered while checking parameter values
-    E> 	Incorrect parameter value for AGGREGATES
+
+---
+
+# Challenges
+
+```{r, echo=TRUE}
+system.time(qgis_run("list"))
+```
+
+---
+
+# Opportunities
+
+```{r, echo = TRUE, results='hide', message=FALSE}
+# remotes::install_github("JanCaha/r_package_qgis")
+library(qgis)
+result <- qgis_buffer(nc, 100000)
+```
+
+```{r, echo = TRUE}
+result
+```
+
+---
+
+# Opportunities
+
+```{r, echo = TRUE, eval=FALSE}
+?qgis_buffer
+```
+
+![qgis_buffer help in qgis package](qgis-buffer-help.png)
 
 ---
 
@@ -204,7 +231,7 @@ qgis_run_algorithm(
 
 - QGIS authors: Nyall Dawson
 
-- qgisprocess collaborators: Jan Caha, Floris Vanderhaeghe, Robin Lovelace, Jannes Muenchow
+- qgisprocess collaborators: Jan Caha, Robin Lovelace, Jannes Muenchow, Lorena Abad Crespo, Floris Vanderhaeghe, Antony Barja, Gabo Gaona
 
 - Fisheries and Oceans Canada: Clark Richards, Blair Greenan
 
